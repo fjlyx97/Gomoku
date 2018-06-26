@@ -328,7 +328,7 @@ void MainWindow::resetGame()
 
 void MainWindow::qtSocket()
 {
-    QtSocket connectWidget(this);
+    QtSocket connectWidget(this,&tcpServer,&tcpSocket);
     connect(&connectWidget,&QtSocket::connectSuccess,this,&MainWindow::acceptConnectSignal);
     connectWidget.exec();
 }
