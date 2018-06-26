@@ -4,17 +4,23 @@
 #include <QLabel>
 #include <QDebug>
 #include <QPushButton>
+#include "qtsocket.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("五子棋");
     //初始化棋盘
     this->chessboardInit();
 
     //加载游戏
+
+    //本地对战
     connect(ui->singerGame,&QPushButton::clicked,this,&MainWindow::singerGame);
+    //联机对战
+    connect(ui->multiGame,&QPushButton::clicked,this,&MainWindow::qtSocket);
 
 }
 MainWindow::~MainWindow()
@@ -305,4 +311,10 @@ void MainWindow::resetGame()
         (*ite)->close();
     }
     labels.clear();
+}
+
+void MainWindow::qtSocket()
+{
+    QtSocket connectWidget(this);
+    connectWidget.exec();
 }

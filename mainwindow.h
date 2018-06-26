@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QVector>
 #include <QLabel>
+#include <QtNetwork>
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +21,7 @@ public:
     void singerGame();
     bool ifWin(int role , int x , int y);
     void resetGame();
+    void qtSocket();
 
 //重写键盘点击事件
 protected:
@@ -35,6 +37,8 @@ private:
     bool isGameBegin; //判断游戏是否开始
     bool role;	//0黑1白
     QVector<QLabel*> labels; //记录所有下的棋子
+    QTcpServer* tcpServer;	//创建服务器
+    QTcpSocket* tcpSocket;  //连接服务器
 };
 
 #endif // MAINWINDOW_H
