@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/new/bg">
+        <file>image/black.bmp</file>
+        <file>image/chessboard.bmp</file>
+        <file>image/dota_background.bmp</file>
+        <file>image/white.bmp</file>
+    </qresource>
+</RCC>
