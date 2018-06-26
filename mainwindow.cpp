@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //添加游戏背景图片
     QPalette palette;
     QPixmap bg(":/new/bg/image/chessboard.bmp");
+    palette.setBrush(backgroundRole(),QBrush(bg.scaled(this->size())));
+    this->setPalette(palette);
+
 }
 
 MainWindow::~MainWindow()
