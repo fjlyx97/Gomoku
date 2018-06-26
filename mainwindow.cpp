@@ -48,7 +48,7 @@ void MainWindow::chessboardInit()
 //键盘点击事件
 void MainWindow::mousePressEvent(QMouseEvent * e)
 {
-    ui->who->setText(tr("(%1,%2)").arg(e->x()).arg(e->y()));
+    //ui->who->setText(tr("(%1,%2)").arg(e->x()).arg(e->y()));
     int putX = e->x();
     int putY = e->y();
     int ansX = 0;
@@ -86,8 +86,8 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         }
         int bookx = (tempx-38) / 50 + 1; //人工测距
         int booky = (tempy-53) / 50 + 1;
-        qDebug() << "ans : " << ansX << " " << ansY;
-        qDebug() << bookx << " " << booky;
+        //qDebug() << "ans : " << ansX << " " << ansY;
+        //qDebug() << bookx << " " << booky;
 
         //测试棋盘
         /*
@@ -108,15 +108,24 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             labels.push_back(chess);
             chess->show();
             chessboard[bookx][booky] = role;
-            if (ifWin(role,bookx,booky))
+            for (int i = 1 ; i < 16 ; i++)
             {
-                if (role == 0)
-                    ui->who->setText("游戏结束，黑方获胜");
-                else
-                    ui->who->setText("游戏结束，白方获胜");
-                return;
-            }
+                for (int j = 1 ; j < 16 ; j++)
+                {
+                    if (ifWin(role,i,j))
+                    {
+                        if (role == 0)
+                            ui->who->setText("游戏结束，黑方获胜");
+                        else
+                            ui->who->setText("游戏结束，白方获胜");
+                        ui->singerGame->setDisabled(false);
+                        ui->botGame->setDisabled(false);
+                        ui->multiGame->setDisabled(false);
+                        return;
 
+                    }
+                }
+            }
             role = !role;
             if (role == 0)
                 ui->who->setText("轮到黑方");
@@ -134,6 +143,9 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 void MainWindow::singerGame()
 {
     this->isGameBegin = true;
+    ui->singerGame->setDisabled(true);
+    ui->multiGame->setDisabled(true);
+    ui->botGame->setDisabled(true);
     ui->who->setText("游戏开始...");
     this->resetGame();
 }
