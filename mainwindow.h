@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QVector>
 
 namespace Ui {
 class MainWindow;
@@ -16,6 +17,7 @@ public:
     ~MainWindow();
     void chessboardInit();
     void singerGame();
+    bool ifWin(int role , int x , int y);
 
 //重写键盘点击事件
 protected:
@@ -30,6 +32,7 @@ private:
     int row[16] , col[16]; //记录棋盘坐标
     bool isGameBegin; //判断游戏是否开始
     bool role;	//0黑1白
+    //QVector<QLabel*> labels; //记录所有下的棋子
 };
 
 #endif // MAINWINDOW_H

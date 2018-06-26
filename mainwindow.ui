@@ -71,17 +71,22 @@
      <string>联机对战</string>
     </property>
    </widget>
-   <widget class="QLabel" name="test">
+   <widget class="QLabel" name="who">
     <property name="geometry">
      <rect>
-      <x>1000</x>
-      <y>500</y>
-      <width>131</width>
+      <x>900</x>
+      <y>320</y>
+      <width>291</width>
       <height>51</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>等待开始</string>
     </property>
    </widget>
   </widget>

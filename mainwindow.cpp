@@ -32,7 +32,7 @@ void MainWindow::chessboardInit()
     {
         for (int j = 1 ; j < 16 ; j++)
         {
-            chessboard[i][j] = 0;
+            chessboard[i][j] = -1;
         }
     }
     for (int i = 1 ; i < 16 ; i++)
@@ -53,7 +53,7 @@ void MainWindow::chessboardInit()
 //键盘点击事件
 void MainWindow::mousePressEvent(QMouseEvent * e)
 {
-    ui->test->setText(tr("(%1,%2)").arg(e->x()).arg(e->y()));
+    //ui->test->setText(tr("(%1,%2)").arg(e->x()).arg(e->y()));
     int putX = e->x();
     int putY = e->y();
     int ansX = 0;
@@ -86,11 +86,28 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         {
             chess->setPixmap(white);
         }
-        if (ansX != 0 && ansY != 0)
+        int bookx = (ansX-100) / 48 + 1; //人工测距
+        int booky = (ansY-100) / 40 + 1;
+        if (ansX != 0 && ansY != 0 && chessboard[bookx][booky] == -1)
         {
-            role = !role;
-            chess->setGeometry(ansX,ansY,28,28);
+            chess->setGeometry(ansX,ansY,30,30);
             chess->show();
+            chessboard[bookx][booky] = role;
+            if (ifWin(role,bookx,booky))
+            {
+                if (role == 0)
+                    ui->who->setText("游戏结束，黑方获胜");
+                else
+                    ui->who->setText("游戏结束，白方获胜");
+                return;
+            }
+
+            role = !role;
+            if (role == 0)
+                ui->who->setText("轮到黑方");
+            else
+                ui->who->setText("轮到白方");
+
             //qDebug() << putX <<  putY << endl;
         }
         else
@@ -104,3 +121,131 @@ void MainWindow::singerGame()
 {
     this->isGameBegin = true;
 }
+
+bool MainWindow::ifWin(int role , int x , int y)
+{
+    //九宫格判断
+    int flag[8];
+    for (int i = 0 ; i < 8 ; i++)
+        flag[i] = 1;
+    //往右边
+    for (int i = x ; i < 16 && i < x+5 ; i++)
+    {
+        if (chessboard[i][y] != role)
+        {
+            flag[0] = 0;
+            break;
+        }
+    }
+    //往下边
+    for (int i = y ; i < 16 && i < y+5; i++)
+    {
+        if (chessboard[x][i] != role)
+        {
+            flag[1] = 0;
+            break;
+        }
+    }
+    //往左边
+    for (int i = x ; i > 0 && i > x-5 ; i--)
+    {
+        if (chessboard[i][y] != role)
+        {
+            flag[2] = 0;
+            break;
+        }
+    }
+    //往上边
+    for (int i = y ; i > 0 && i > y-5 ; i--)
+    {
+        if (chessboard[x][i] != role)
+        {
+            flag[3] = 0;
+            break;
+        }
+    }
+
+    int temp_x , temp_y;
+    //往右上
+    temp_x = x;
+    temp_y = y;
+    for (int index = 1 ; index <= 5 ; index++)
+    {
+        if (chessboard[temp_x][temp_y] != role)
+        {
+            flag[4] = 0;
+            break;
+        }
+        temp_x++;
+        temp_y--;
+        if (temp_x > 15 || temp_y < 1)
+        {
+            flag[4] = 0;
+            break;
+        }
+    }
+    //往右下
+    temp_x = x;
+    temp_y = y;
+    for (int index = 1 ; index <= 5 ; index++)
+    {
+        if (chessboard[temp_x][temp_y] != role)
+        {
+            flag[5] = 0;
+            break;
+        }
+        temp_x++;
+        temp_y++;
+        if (temp_x > 15 || temp_y > 15)
+        {
+            flag[5] = 0;
+            break;
+        }
+    }
+    //往左下
+    temp_x = x;
+    temp_y = y;
+    for (int index = 1 ; index <= 5 ; index++)
+    {
+        if (chessboard[temp_x][temp_y] != role)
+        {
+            flag[6] = 0;
+            break;
+        }
+        temp_x--;
+        temp_y++;
+        if (temp_x < 1 || temp_y > 15)
+        {
+            flag[6] = 0;
+            break;
+        }
+    }
+    //往左上
+    temp_x = x;
+    temp_y = y;
+    for (int index = 1 ; index <= 5 ; index++)
+    {
+        if (chessboard[temp_x][temp_y] != role)
+        {
+            flag[7] = 0;
+            break;
+        }
+        temp_x--;
+        temp_y--;
+        if (temp_x < 1 || temp_y < 1)
+        {
+            flag[7] = 0;
+            break;
+        }
+    }
+    //判断是否获胜
+    for (auto t : flag)
+    {
+        if ( t == 1 )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
