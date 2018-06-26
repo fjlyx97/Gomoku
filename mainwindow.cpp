@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include <QLabel>
 #include <QDebug>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setPalette(palette);
 
     //加载游戏
+    connect(ui->singerGame,&QPushButton::clicked,this,&MainWindow::singerGame);
 
 }
 MainWindow::~MainWindow()
@@ -48,7 +50,6 @@ void MainWindow::chessboardInit()
             col[i] = col[i-1] + 40;
         }
     }
-    isGameBegin = true;
 }
 //键盘点击事件
 void MainWindow::mousePressEvent(QMouseEvent * e)
@@ -91,6 +92,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         if (ansX != 0 && ansY != 0 && chessboard[bookx][booky] == -1)
         {
             chess->setGeometry(ansX,ansY,30,30);
+            labels.push_back(chess);
             chess->show();
             chessboard[bookx][booky] = role;
             if (ifWin(role,bookx,booky))
@@ -120,6 +122,8 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 void MainWindow::singerGame()
 {
     this->isGameBegin = true;
+    ui->who->setText("游戏开始...");
+    this->resetGame();
 }
 
 bool MainWindow::ifWin(int role , int x , int y)
@@ -249,3 +253,32 @@ bool MainWindow::ifWin(int role , int x , int y)
     return false;
 }
 
+void MainWindow::resetGame()
+{
+    for (int i = 1 ; i < 16 ; i++)
+    {
+        for (int j = 1 ; j < 16 ; j++)
+        {
+            chessboard[i][j] = -1;
+        }
+    }
+    for (int i = 1 ; i < 16 ; i++)
+    {
+        if (i == 1)
+        {
+            row[i] = 117;
+            col[i] = 120;
+        }
+        else
+        {
+            row[i] = row[i-1] + 48;
+            col[i] = col[i-1] + 40;
+        }
+    }
+    QVector<QLabel*>::iterator ite;
+    for (ite = labels.begin() ; ite != labels.end() ; ite++)
+    {
+        (*ite)->close();
+    }
+    labels.clear();
+}

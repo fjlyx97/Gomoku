@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QVector>
+#include <QLabel>
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +19,7 @@ public:
     void chessboardInit();
     void singerGame();
     bool ifWin(int role , int x , int y);
+    void resetGame();
 
 //重写键盘点击事件
 protected:
@@ -32,7 +34,7 @@ private:
     int row[16] , col[16]; //记录棋盘坐标
     bool isGameBegin; //判断游戏是否开始
     bool role;	//0黑1白
-    //QVector<QLabel*> labels; //记录所有下的棋子
+    QVector<QLabel*> labels; //记录所有下的棋子
 };
 
 #endif // MAINWINDOW_H
