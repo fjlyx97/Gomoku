@@ -13,10 +13,15 @@ class QtSocket : public QDialog
     Q_OBJECT
 
 public:
-    explicit QtSocket(QWidget *parent = 0 , QTcpServer* tcpServer = NULL , QTcpSocket* tcpSocket = NULL);
+    explicit QtSocket(QWidget *parent = 0);
     ~QtSocket();
     void createServer();
     void connectServer();
+    void newConnect();
+
+signals:
+    void connectSuccess(bool isConnect);
+
 private:
     Ui::QtSocket *ui;
     QString localHostName;

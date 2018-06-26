@@ -30,6 +30,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::chessboardInit()
 {
+    this->role = 1;
     for (int i = 1 ; i < 16 ; i++)
     {
         for (int j = 1 ; j < 16 ; j++)
@@ -54,9 +55,20 @@ void MainWindow::chessboardInit()
 //键盘点击事件
 void MainWindow::mousePressEvent(QMouseEvent * e)
 {
-    //ui->who->setText(tr("(%1,%2)").arg(e->x()).arg(e->y()));
     int putX = e->x();
     int putY = e->y();
+    if (isTcpConnect)
+    {
+
+    }
+    else
+    {
+        runGame(putX,putY);
+    }
+}
+
+void MainWindow::runGame(int putX, int putY)
+{
     int ansX = 0;
     int ansY = 0;
     QPixmap black(":/new/bg1/image/black.png");
@@ -94,7 +106,6 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         int booky = (tempy-53) / 50 + 1;
         //qDebug() << "ans : " << ansX << " " << ansY;
         //qDebug() << bookx << " " << booky;
-
         //测试棋盘
         /*
         for (int t = 1 ; t < 16 ; t++)
@@ -144,6 +155,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             delete chess;
         }
     }
+
 }
 
 void MainWindow::singerGame()
@@ -285,6 +297,7 @@ bool MainWindow::ifWin(int role , int x , int y)
 
 void MainWindow::resetGame()
 {
+    role = !role;
     for (int i = 1 ; i < 16 ; i++)
     {
         for (int j = 1 ; j < 16 ; j++)
@@ -316,5 +329,37 @@ void MainWindow::resetGame()
 void MainWindow::qtSocket()
 {
     QtSocket connectWidget(this);
+    connect(&connectWidget,&QtSocket::connectSuccess,this,&MainWindow::acceptConnectSignal);
     connectWidget.exec();
+}
+
+void MainWindow::acceptConnectSignal(bool misTcpConnect)
+{
+    this->isTcpConnect = misTcpConnect;
+    if (isTcpConnect)
+    {
+        ui->singerGame->setDisabled(true);
+        ui->multiGame->setDisabled(true);
+        ui->botGame->setDisabled(true);
+        ui->who->setText("游戏开始...");
+        resetGame();
+        connect(this,&MainWindow::initStatus,this,&MainWindow::sendInitStatus);
+        emit initStatus();
+    }
+}
+void MainWindow::sendInitStatus()
+{
+    if (role == 0)
+    {
+        isTurn = true;
+        QString content = "false";
+        tcpSocket->write(content.toUtf8());
+    }
+    else
+    {
+        isTurn = false;
+        QString content = "true";
+        tcpSocket->write(content.toUtf8());
+    }
+    tcpSocket->flush();
 }
