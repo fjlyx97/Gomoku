@@ -2,7 +2,15 @@
     <qresource prefix="/new/bg">
         <file>image/black.bmp</file>
         <file>image/chessboard.bmp</file>
-        <file>image/dota_background.bmp</file>
         <file>image/white.bmp</file>
+    </qresource>
+    <qresource prefix="/new/bg1">
+        <file>image/black.png</file>
+        <file>image/chessboard.png</file>
+        <file>image/white.png</file>
+        <file>image/levelselect.png</file>
+        <file>image/baisheng.png</file>
+        <file>image/heisheng.png</file>
+        <file>image/logo.png</file>
     </qresource>
 </RCC>

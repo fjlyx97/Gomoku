@@ -13,12 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //初始化棋盘
     this->chessboardInit();
 
-    //添加游戏背景图片
-    QPalette palette;
-    QPixmap bg(":/new/bg/image/chessboard.bmp");
-    palette.setBrush(backgroundRole(),QBrush(bg.scaled(this->size())));
-    this->setPalette(palette);
-
     //加载游戏
     connect(ui->singerGame,&QPushButton::clicked,this,&MainWindow::singerGame);
 
@@ -41,27 +35,28 @@ void MainWindow::chessboardInit()
     {
         if (i == 1)
         {
-            row[i] = 117;
-            col[i] = 120;
+            row[i] = 38;
+            col[i] = 53;
         }
         else
         {
-            row[i] = row[i-1] + 48;
-            col[i] = col[i-1] + 40;
+            row[i] = row[i-1] + 52;
+            col[i] = col[i-1] + 49;
         }
     }
 }
 //键盘点击事件
 void MainWindow::mousePressEvent(QMouseEvent * e)
 {
-    //ui->test->setText(tr("(%1,%2)").arg(e->x()).arg(e->y()));
+    ui->who->setText(tr("(%1,%2)").arg(e->x()).arg(e->y()));
     int putX = e->x();
     int putY = e->y();
     int ansX = 0;
     int ansY = 0;
-    QPixmap black(":/new/bg/image/black.bmp");
-    QPixmap white(":/new/bg/image/white.bmp");
+    QPixmap black(":/new/bg1/image/black.png");
+    QPixmap white(":/new/bg1/image/white.png");
     QLabel* chess = new QLabel(this);
+    int tempx , tempy;
 
 
     if (isGameBegin)
@@ -70,10 +65,12 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         {
             for (int j = 1 ; j < 16 ; j++)
             {
-                if ( abs(putX-row[i]) < 10 && abs(putY-col[j]) < 10 )
+                if ( abs(putX-row[i]) < 20 && abs(putY-col[j]) < 20 )
                 {
-                    ansX = row[i] - 14;
-                    ansY = col[j] - 14;
+                    ansX = row[i] - 13;
+                    ansY = col[j] - 13;
+                    tempx = row[i];
+                    tempy = col[j];
                     //qDebug() << "row col:" << row[i] <<  col[j] << endl;
                     break;
                 }
@@ -87,11 +84,27 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
         {
             chess->setPixmap(white);
         }
-        int bookx = (ansX-100) / 48 + 1; //人工测距
-        int booky = (ansY-100) / 40 + 1;
+        int bookx = (tempx-38) / 50 + 1; //人工测距
+        int booky = (tempy-53) / 50 + 1;
+        qDebug() << "ans : " << ansX << " " << ansY;
+        qDebug() << bookx << " " << booky;
+
+        //测试棋盘
+        /*
+        for (int t = 1 ; t < 16 ; t++)
+        {
+            for (int k = 1 ; k < 16 ; k++)
+            {
+                qDebug() << chessboard[t][k] << " ";
+            }
+            qDebug() << endl;
+        }
+        */
+
         if (ansX != 0 && ansY != 0 && chessboard[bookx][booky] == -1)
         {
             chess->setGeometry(ansX,ansY,30,30);
+            chess->setScaledContents(true);
             labels.push_back(chess);
             chess->show();
             chessboard[bookx][booky] = role;
@@ -109,7 +122,6 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
                 ui->who->setText("轮到黑方");
             else
                 ui->who->setText("轮到白方");
-
             //qDebug() << putX <<  putY << endl;
         }
         else
@@ -133,36 +145,36 @@ bool MainWindow::ifWin(int role , int x , int y)
     for (int i = 0 ; i < 8 ; i++)
         flag[i] = 1;
     //往右边
-    for (int i = x ; i < 16 && i < x+5 ; i++)
+    for (int i = x ; i < x+5 ; i++)
     {
-        if (chessboard[i][y] != role)
+        if (chessboard[i][y] != role || i > 15)
         {
             flag[0] = 0;
             break;
         }
     }
     //往下边
-    for (int i = y ; i < 16 && i < y+5; i++)
+    for (int i = y ; i < y+5; i++)
     {
-        if (chessboard[x][i] != role)
+        if (chessboard[x][i] != role || i > 15)
         {
             flag[1] = 0;
             break;
         }
     }
     //往左边
-    for (int i = x ; i > 0 && i > x-5 ; i--)
+    for (int i = x ; i > x-5 ; i--)
     {
-        if (chessboard[i][y] != role)
+        if (chessboard[i][y] != role || i < 1)
         {
             flag[2] = 0;
             break;
         }
     }
     //往上边
-    for (int i = y ; i > 0 && i > y-5 ; i--)
+    for (int i = y ; i > y-5 ; i--)
     {
-        if (chessboard[x][i] != role)
+        if (chessboard[x][i] != role || i < 1)
         {
             flag[3] = 0;
             break;
@@ -266,13 +278,13 @@ void MainWindow::resetGame()
     {
         if (i == 1)
         {
-            row[i] = 117;
-            col[i] = 120;
+            row[i] = 38;
+            col[i] = 53;
         }
         else
         {
-            row[i] = row[i-1] + 48;
-            col[i] = col[i-1] + 40;
+            row[i] = row[i-1] + 52;
+            col[i] = col[i-1] + 50;
         }
     }
     QVector<QLabel*>::iterator ite;

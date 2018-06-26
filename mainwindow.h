@@ -30,7 +30,7 @@ protected:
 private:
     Ui::MainWindow *ui;
     //记录棋盘
-    int chessboard[16][16]; //记录棋盘，横差50，纵差40，左上（117,120），右下（790,690）
+    int chessboard[16][16]; //记录棋盘，横差50，纵差50，左上（38,53），右下（767,744）
     int row[16] , col[16]; //记录棋盘坐标
     bool isGameBegin; //判断游戏是否开始
     bool role;	//0黑1白
