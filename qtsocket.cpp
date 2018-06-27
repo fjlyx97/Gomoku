@@ -31,7 +31,7 @@ QtSocket::~QtSocket()
 void QtSocket::createServer()
 {
     *mtcpServer = new QTcpServer();
-    if (!(*mtcpServer)->listen(QHostAddress::LocalHost,ui->portContent->text().toInt()))
+    if (!(*mtcpServer)->listen(QHostAddress::Any,ui->portContent->text().toInt()))
     {
         QMessageBox::about(this,"错误","服务器创建失败");
         this->close();
@@ -52,6 +52,7 @@ void QtSocket::newConnect()
 void QtSocket::connectServer()
 {
     *mtcpSocket = new QTcpSocket();
+    qDebug() << ui->ipContent->text();
     (*mtcpSocket)->connectToHost(ui->ipContent->text(),ui->portContent->text().toInt());
     //qDebug() << "socket :: " << (*mtcpSocket)->state();
     if (!(*mtcpSocket)->waitForConnected(15000))
