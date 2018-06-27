@@ -4,6 +4,8 @@
 #include <QLabel>
 #include <QDebug>
 #include <QPushButton>
+#include <QStringList>
+#include <QMessageBox>
 #include "qtsocket.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -57,9 +59,15 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
 {
     int putX = e->x();
     int putY = e->y();
-    if (isTcpConnect)
+    if (isTcpConnect) //如果是tcp发送请求
     {
-
+        if (isTurn)
+        {
+            QString msg = QString::number(putX) + ',' + QString::number(putY);
+            tcpSocket->write(msg.toUtf8());
+            isTurn = false;
+            runGame(putX,putY);
+        }
     }
     else
     {
@@ -344,6 +352,8 @@ void MainWindow::acceptConnectSignal(bool misTcpConnect)
         ui->who->setText("游戏开始...");
         resetGame();
         connect(this,&MainWindow::initStatus,this,&MainWindow::sendInitStatus);
+        connect(this->tcpSocket,&QTcpSocket::readyRead,this,&MainWindow::recvPos);
+        connect(this->tcpSocket,&QTcpSocket::disconnected,this,&MainWindow::tcpDisconnect);
         emit initStatus();
     }
 }
@@ -362,4 +372,31 @@ void MainWindow::sendInitStatus()
         tcpSocket->write(content.toUtf8());
     }
     tcpSocket->flush();
+}
+
+void MainWindow::recvPos()
+{
+    QByteArray buffer;
+    buffer = tcpSocket->readAll();
+    if(!buffer.isEmpty())
+    {
+        QString recvPoint = tr(buffer);
+        QStringList mPoint = recvPoint.split(',');
+        int posX , posY;
+        posX = mPoint[0].toInt();
+        posY = mPoint[1].toInt();
+        runGame(posX,posY);
+        isTurn = !isTurn;
+        //qDebug() << posX << " " << posY;
+    }
+}
+
+void MainWindow::tcpDisconnect()
+{
+    QMessageBox::about(this,"警告","已和对方失去连接");
+    ui->singerGame->setDisabled(false);
+    ui->multiGame->setDisabled(false);
+    ui->botGame->setDisabled(false);
+    ui->who->setText("等待游戏重新开始");
+    resetGame();
 }

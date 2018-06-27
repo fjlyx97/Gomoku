@@ -27,8 +27,10 @@ public:
     void resetGame();
     //多人游戏
     void qtSocket();
-    void acceptConnectSignal(bool misTcpConnect);
-    void sendInitStatus();
+    void acceptConnectSignal(bool misTcpConnect); //接受连接信号
+    void sendInitStatus(); //发送初始状态
+    void recvPos();  		//游戏中接受坐标
+    void tcpDisconnect();	//socket掉线
     //游戏绘制
     void runGame(int putX , int putY);
 
