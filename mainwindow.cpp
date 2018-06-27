@@ -61,16 +61,19 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
     int putY = e->y();
     if (isTcpConnect) //如果是tcp发送请求
     {
-        QString content;
         //qDebug() << isTurn;
         if (isTurn)
         {
-            isTurn = false;
-            content = "true,";
-            QString msg = content + QString::number(putX) + ',' + QString::number(putY);
-            tcpSocket->write(msg.toUtf8());
-            tcpSocket->flush();
-            runGame(putX,putY);
+            if (isInChessboard(putX,putY))
+            {
+                QString content;
+                isTurn = false;
+                content = "true,";
+                QString msg = content + QString::number(putX) + ',' + QString::number(putY);
+                tcpSocket->write(msg.toUtf8());
+                tcpSocket->flush();
+                runGame(putX,putY);
+            }
         }
     }
     else
@@ -156,10 +159,18 @@ void MainWindow::runGame(int putX, int putY)
                 }
             }
             role = !role;
-            if (role == 0)
-                ui->who->setText("轮到黑方");
+            if (!isTcpConnect)
+            {
+                if (role == 0)
+                    ui->who->setText("轮到黑方");
+                else
+                    ui->who->setText("轮到白方");
+            }
             else
-                ui->who->setText("轮到白方");
+            {
+                ui->who->setText("轮到对方");
+            }
+
             //qDebug() << putX <<  putY << endl;
         }
         else
@@ -357,6 +368,10 @@ void MainWindow::acceptConnectSignal(bool misTcpConnect)
         ui->who->setText("游戏开始...");
         resetGame();
         isTurn = true;
+        if (isTurn)
+            ui->who->setText("轮到自己");
+        else
+            ui->who->setText("轮到对方");
         //qDebug() << "Server " << tcpSocket->state();
         //qDebug() << "role " << role;
         //qDebug() << "isTurn " << isTurn;
@@ -372,7 +387,6 @@ void MainWindow::recvPos()
     if(!buffer.isEmpty())
     {
         QString recvPoint = tr(buffer);
-        qDebug() << recvPoint;
         QStringList mPoint = recvPoint.split(',');
 
         int posX , posY;
@@ -380,6 +394,7 @@ void MainWindow::recvPos()
         posY = mPoint[2].toInt();
         runGame(posX,posY);
         isTurn = true;
+        ui->who->setText("轮到自己");
     }
 }
 
@@ -404,6 +419,11 @@ void MainWindow::acceptClient(bool misTcpConnect)
         ui->who->setText("游戏开始...");
         resetGame();
         isTurn = false;
+        if (isTurn)
+            ui->who->setText("轮到自己");
+        else
+            ui->who->setText("轮到对方");
+
         //qDebug() << "client " << tcpSocket->state();
         //qDebug() << "role " << role;
         //qDebug() << "isTurn " << isTurn;
@@ -413,3 +433,30 @@ void MainWindow::acceptClient(bool misTcpConnect)
     }
 }
 
+bool MainWindow::isInChessboard(int putX ,int putY)
+{
+    int ansX = 0;
+    int ansY = 0;
+    int tempx , tempy;
+    for (int i = 1 ; i < 16 ; i++)
+    {
+        for (int j = 1 ; j < 16 ; j++)
+        {
+            if ( abs(putX-row[i]) < 20 && abs(putY-col[j]) < 20 )
+            {
+                ansX = row[i] - 13;
+                ansY = col[j] - 13;
+                tempx = row[i];
+                tempy = col[j];
+                //qDebug() << "row col:" << row[i] <<  col[j] << endl;
+                break;
+            }
+        }
+    }
+    int bookx = (tempx-38) / 50 + 1; //人工测距
+    int booky = (tempy-53) / 50 + 1;
+    if (ansX != 0 && ansY != 0 && chessboard[bookx][booky] == -1)
+        return true;
+    else
+        return false;
+}
