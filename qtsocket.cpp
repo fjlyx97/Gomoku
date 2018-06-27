@@ -52,7 +52,7 @@ void QtSocket::newConnect()
 void QtSocket::connectServer()
 {
     *mtcpSocket = new QTcpSocket();
-    qDebug() << ui->ipContent->text();
+    //qDebug() << ui->ipContent->text();
     (*mtcpSocket)->connectToHost(ui->ipContent->text(),ui->portContent->text().toInt());
     //qDebug() << "socket :: " << (*mtcpSocket)->state();
     if (!(*mtcpSocket)->waitForConnected(15000))

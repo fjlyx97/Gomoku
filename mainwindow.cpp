@@ -17,8 +17,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //初始化棋盘
     this->chessboardInit();
 
-    //加载游戏
-
     //本地对战
     connect(ui->singerGame,&QPushButton::clicked,this,&MainWindow::singerGame);
     //联机对战
@@ -153,6 +151,7 @@ void MainWindow::runGame(int putX, int putY)
                         ui->singerGame->setDisabled(false);
                         ui->botGame->setDisabled(false);
                         ui->multiGame->setDisabled(false);
+                        isGameBegin = false;
                         return;
 
                     }
@@ -394,7 +393,8 @@ void MainWindow::recvPos()
         posY = mPoint[2].toInt();
         runGame(posX,posY);
         isTurn = true;
-        ui->who->setText("轮到自己");
+        if (isGameBegin)
+            ui->who->setText("轮到自己");
     }
 }
 
@@ -405,7 +405,7 @@ void MainWindow::tcpDisconnect()
     ui->multiGame->setDisabled(false);
     ui->botGame->setDisabled(false);
     ui->who->setText("等待游戏重新开始");
-    resetGame();
+    qtSocket();
 }
 
 void MainWindow::acceptClient(bool misTcpConnect)
