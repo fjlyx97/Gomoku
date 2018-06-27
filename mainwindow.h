@@ -28,7 +28,7 @@ public:
     //多人游戏
     void qtSocket();
     void acceptConnectSignal(bool misTcpConnect); //接受连接信号
-    void sendInitStatus(); //发送初始状态
+    void acceptClient(bool misTcpconnect);	//客户端连接
     void recvPos();  		//游戏中接受坐标
     void tcpDisconnect();	//socket掉线
     //游戏绘制
@@ -54,8 +54,9 @@ private:
     //服务器连接
     QTcpServer* tcpServer;	//创建服务器
     QTcpSocket* tcpSocket;  //连接服务器
+    //状态
     bool isTcpConnect;		//判断是否连接成功
-    bool isTurn;
+    bool isTurn;			//是否自己执棋
 };
 
 #endif // MAINWINDOW_H

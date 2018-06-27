@@ -46,12 +46,21 @@ void QtSocket::createServer()
 void QtSocket::newConnect()
 {
     *mtcpSocket = (*mtcpServer)->nextPendingConnection();
-    (*mtcpServer)->close();
-    //mtcpSocket->write("test");
     emit connectSuccess(true);
 }
 
 void QtSocket::connectServer()
 {
-
+    *mtcpSocket = new QTcpSocket();
+    (*mtcpSocket)->connectToHost(ui->ipContent->text(),ui->portContent->text().toInt());
+    //qDebug() << "socket :: " << (*mtcpSocket)->state();
+    if (!(*mtcpSocket)->waitForConnected(15000))
+    {
+        QMessageBox::about(this,"警告","服务器连接失败");
+    }
+    else
+    {
+        QMessageBox::about(this,"成功","服务器连接成功");
+        emit isClient(true);
+    }
 }

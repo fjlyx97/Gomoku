@@ -21,6 +21,7 @@ public:
 
 signals:
     void connectSuccess(bool isConnect);
+    void isClient(bool isConnect);
 
 private:
     Ui::QtSocket *ui;

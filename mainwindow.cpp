@@ -61,11 +61,15 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
     int putY = e->y();
     if (isTcpConnect) //如果是tcp发送请求
     {
+        QString content;
+        //qDebug() << isTurn;
         if (isTurn)
         {
-            QString msg = QString::number(putX) + ',' + QString::number(putY);
-            tcpSocket->write(msg.toUtf8());
             isTurn = false;
+            content = "true,";
+            QString msg = content + QString::number(putX) + ',' + QString::number(putY);
+            tcpSocket->write(msg.toUtf8());
+            tcpSocket->flush();
             runGame(putX,putY);
         }
     }
@@ -338,6 +342,7 @@ void MainWindow::qtSocket()
 {
     QtSocket connectWidget(this,&tcpServer,&tcpSocket);
     connect(&connectWidget,&QtSocket::connectSuccess,this,&MainWindow::acceptConnectSignal);
+    connect(&connectWidget,&QtSocket::isClient,this,&MainWindow::acceptClient);
     connectWidget.exec();
 }
 
@@ -351,27 +356,13 @@ void MainWindow::acceptConnectSignal(bool misTcpConnect)
         ui->botGame->setDisabled(true);
         ui->who->setText("游戏开始...");
         resetGame();
-        connect(this,&MainWindow::initStatus,this,&MainWindow::sendInitStatus);
+        isTurn = true;
+        //qDebug() << "Server " << tcpSocket->state();
+        //qDebug() << "role " << role;
+        //qDebug() << "isTurn " << isTurn;
         connect(this->tcpSocket,&QTcpSocket::readyRead,this,&MainWindow::recvPos);
         connect(this->tcpSocket,&QTcpSocket::disconnected,this,&MainWindow::tcpDisconnect);
-        emit initStatus();
     }
-}
-void MainWindow::sendInitStatus()
-{
-    if (role == 0)
-    {
-        isTurn = true;
-        QString content = "false";
-        tcpSocket->write(content.toUtf8());
-    }
-    else
-    {
-        isTurn = false;
-        QString content = "true";
-        tcpSocket->write(content.toUtf8());
-    }
-    tcpSocket->flush();
 }
 
 void MainWindow::recvPos()
@@ -381,13 +372,14 @@ void MainWindow::recvPos()
     if(!buffer.isEmpty())
     {
         QString recvPoint = tr(buffer);
+        qDebug() << recvPoint;
         QStringList mPoint = recvPoint.split(',');
+
         int posX , posY;
-        posX = mPoint[0].toInt();
-        posY = mPoint[1].toInt();
+        posX = mPoint[1].toInt();
+        posY = mPoint[2].toInt();
         runGame(posX,posY);
-        isTurn = !isTurn;
-        //qDebug() << posX << " " << posY;
+        isTurn = true;
     }
 }
 
@@ -400,3 +392,24 @@ void MainWindow::tcpDisconnect()
     ui->who->setText("等待游戏重新开始");
     resetGame();
 }
+
+void MainWindow::acceptClient(bool misTcpConnect)
+{
+    this->isTcpConnect = misTcpConnect;
+    if (isTcpConnect)
+    {
+        ui->singerGame->setDisabled(true);
+        ui->multiGame->setDisabled(true);
+        ui->botGame->setDisabled(true);
+        ui->who->setText("游戏开始...");
+        resetGame();
+        isTurn = false;
+        //qDebug() << "client " << tcpSocket->state();
+        //qDebug() << "role " << role;
+        //qDebug() << "isTurn " << isTurn;
+
+        connect(this->tcpSocket,&QTcpSocket::readyRead,this,&MainWindow::recvPos);
+        connect(this->tcpSocket,&QTcpSocket::disconnected,this,&MainWindow::tcpDisconnect);
+    }
+}
+
