@@ -254,6 +254,7 @@ void GomokuBot::putChess(int putX, int putY)
     //qDebug() << "x : " << putX << "y : " << putY;
     int bestPutX , bestPutY;
     int maxWidget = -1;
+    //防守判断
     for (int i = 1 ; i < 16 ; i++)
     {
         for (int j = 1; j < 16 ; j++)
@@ -270,13 +271,15 @@ void GomokuBot::putChess(int putX, int putY)
             }
         }
     }
+    qDebug() << "mrole : " << mrole;
+    //进攻判断
     for (int i = 1 ; i < 16 ; i++)
     {
         for (int j = 1; j < 16 ; j++)
         {
             if (bookChess[i][j] == false)
             {
-                int enemyValue = winWidget(i,j,mrole);
+                int enemyValue = winWidget(i,j,!mrole);
                 if (enemyValue >= bookWidget[i][j] && enemyValue >= maxWidget)
                 {
                     bookWidget[i][j] = enemyValue;
@@ -287,7 +290,9 @@ void GomokuBot::putChess(int putX, int putY)
             }
         }
     }
+    qDebug() << "mrole : " << !mrole;
     bookChess[bestPutX][bestPutY] = true;
+    chessBoard[bestPutX][bestPutY] = mrole;
     emit sendPutChess(bestPutX,bestPutY);
     //qDebug() << bestPutX << bestPutY;
 }

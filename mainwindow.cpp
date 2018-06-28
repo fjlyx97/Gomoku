@@ -200,10 +200,13 @@ void MainWindow::runGame(int putX, int putY)
             }
             if (!isTcpConnect)
             {
-                if (role == 0)
-                    ui->who->setText("轮到黑方");
-                else
-                    ui->who->setText("轮到白方");
+                if (isGameBegin)
+                {
+                    if (role == 0)
+                        ui->who->setText("轮到黑方");
+                    else
+                        ui->who->setText("轮到白方");
+                }
             }
             else
             {
