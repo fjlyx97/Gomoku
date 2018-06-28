@@ -5,10 +5,13 @@
 class GomokuBot : public QObject
 {
     Q_OBJECT	//包含信号槽的宏
+signals:
+    void sendPutChess(int putX , int putY);
 public:
-    GomokuBot();
+    GomokuBot(int role);
     ~GomokuBot();
-    void reset(int role);		//恢复棋盘权重
+    void reset();		//恢复棋盘权重
+    void putChess(int putX , int putY);			//接受信号获得棋盘落点.
     int winWidget(int putX,int putY , int role);	//计算可以获胜的权重
     int winValue(int mmark , int enemymark);	//返回五子棋判断得分
     /*
@@ -18,6 +21,7 @@ public:
      * 活二 100
      * 活一 10
      */
+
 
 private:
     int bookWidget[16][16]; 	//储存当下可以获胜的权重

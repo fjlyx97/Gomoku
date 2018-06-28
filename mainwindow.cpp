@@ -52,6 +52,10 @@ void MainWindow::chessboardInit()
             col[i] = col[i-1] + 49;
         }
     }
+    isTcpConnect = false;
+    isMulGame = false;
+    isBotGame = false;
+    isTurn = true;
 }
 //键盘点击事件
 void MainWindow::mousePressEvent(QMouseEvent * e)
@@ -78,6 +82,13 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
     else if (isMulGame)
     {
         runGame(putX,putY);
+    }
+    else if (isBotGame)
+    {
+        if (isTurn)
+        {
+            runGame(putX,putY);
+        }
     }
 }
 
@@ -139,6 +150,8 @@ void MainWindow::runGame(int putX, int putY)
             labels.push_back(chess);
             chess->show();
             chessboard[bookx][booky] = role;
+
+
             for (int i = 1 ; i < 16 ; i++)
             {
                 for (int j = 1 ; j < 16 ; j++)
@@ -157,11 +170,13 @@ void MainWindow::runGame(int putX, int putY)
                         if (isBotGame)
                             delete mBot;
 
+                        /*
                         if (isTcpConnect)
                         {
                             tcpServer->close();
                             tcpSocket->close();
                         }
+                        */
 
                         this->isTcpConnect = false;
                         this->isMulGame = false;
@@ -173,6 +188,13 @@ void MainWindow::runGame(int putX, int putY)
                 }
             }
             role = !role;
+
+            //机器人下棋
+            if (isBotGame && isTurn)
+            {
+                isTurn = false;
+                emit sendToBot(bookx,booky);
+            }
             if (!isTcpConnect)
             {
                 if (role == 0)
@@ -184,8 +206,6 @@ void MainWindow::runGame(int putX, int putY)
             {
                 ui->who->setText("轮到对方");
             }
-
-            //qDebug() << putX <<  putY << endl;
         }
         else
         {
@@ -487,5 +507,15 @@ void MainWindow::botGame()
     ui->botGame->setDisabled(true);
     ui->who->setText("游戏开始...");
     //初始化Bot
-    mBot = new GomokuBot;
+    mBot = new GomokuBot(!role);
+    mBot->reset();
+    connect(this,&MainWindow::sendToBot,mBot,&GomokuBot::putChess);
+    connect(mBot,&GomokuBot::sendPutChess,this,&MainWindow::recBotChess);
+}
+
+void MainWindow::recBotChess(int putX, int putY)
+{
+    qDebug() << "Bot x : " << putX << "Bot y : " << putY;
+    runGame(row[putX],col[putY]);
+    isTurn = true;
 }

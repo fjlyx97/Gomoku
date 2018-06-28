@@ -34,6 +34,7 @@ public:
     void tcpDisconnect();	//socket掉线
     //人机对战
     void botGame();
+    void recBotChess(int putX ,int putY);
     //游戏绘制
     void runGame(int putX , int putY);
 
@@ -43,6 +44,7 @@ protected:
 
 signals:
     void initStatus();
+    void sendToBot(int putX,int putY);
 
 
 private:
