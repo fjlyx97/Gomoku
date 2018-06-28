@@ -21,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->singerGame,&QPushButton::clicked,this,&MainWindow::singerGame);
     //联机对战
     connect(ui->multiGame,&QPushButton::clicked,this,&MainWindow::qtSocket);
-
+    //人机对战
+    connect(ui->botGame,&QPushButton::clicked,this,&MainWindow::botGame);
 }
 MainWindow::~MainWindow()
 {
@@ -74,7 +75,7 @@ void MainWindow::mousePressEvent(QMouseEvent * e)
             }
         }
     }
-    else
+    else if (isMulGame)
     {
         runGame(putX,putY);
     }
@@ -142,6 +143,7 @@ void MainWindow::runGame(int putX, int putY)
             {
                 for (int j = 1 ; j < 16 ; j++)
                 {
+                    //判断胜利 还原环境
                     if (ifWin(role,i,j))
                     {
                         if (role == 0)
@@ -151,6 +153,19 @@ void MainWindow::runGame(int putX, int putY)
                         ui->singerGame->setDisabled(false);
                         ui->botGame->setDisabled(false);
                         ui->multiGame->setDisabled(false);
+                        // 初始化游戏
+                        if (isBotGame)
+                            delete mBot;
+
+                        if (isTcpConnect)
+                        {
+                            tcpServer->close();
+                            tcpSocket->close();
+                        }
+
+                        this->isTcpConnect = false;
+                        this->isMulGame = false;
+                        this->isBotGame = false;
                         isGameBegin = false;
                         return;
 
@@ -183,6 +198,7 @@ void MainWindow::runGame(int putX, int putY)
 void MainWindow::singerGame()
 {
     this->isGameBegin = true;
+    this->isMulGame = true;
     ui->singerGame->setDisabled(true);
     ui->multiGame->setDisabled(true);
     ui->botGame->setDisabled(true);
@@ -459,4 +475,17 @@ bool MainWindow::isInChessboard(int putX ,int putY)
         return true;
     else
         return false;
+}
+
+void MainWindow::botGame()
+{
+    this->resetGame();
+    isBotGame = true;
+    isGameBegin = true;
+    ui->singerGame->setDisabled(true);
+    ui->multiGame->setDisabled(true);
+    ui->botGame->setDisabled(true);
+    ui->who->setText("游戏开始...");
+    //初始化Bot
+    mBot = new GomokuBot;
 }

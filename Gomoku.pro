@@ -27,11 +27,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    qtsocket.cpp
+    qtsocket.cpp \
+    gomokubot.cpp
 
 HEADERS += \
         mainwindow.h \
-    qtsocket.h
+    qtsocket.h \
+    gomokubot.h
 
 FORMS += \
         mainwindow.ui \
