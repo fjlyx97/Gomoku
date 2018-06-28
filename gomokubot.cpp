@@ -98,6 +98,105 @@ int GomokuBot::winWidget(int putX, int putY , int role)
     }
     widget[1] = winValue(mmark,enemymark);
 
+    int tempx , tempy;
+    //右斜判断
+    mmark = 0;
+    enemymark = 0;
+    tempx = putX+1;
+    tempy = putY-1;
+    for (int index = 1 ; index < 5 ; index++)
+    {
+        if (tempx < 16 && tempy > 0)
+        {
+            if (chessBoard[tempx][tempy] == role)
+            {
+                mmark++;
+            }
+            else if (chessBoard[tempx][tempy] != role && chessBoard[tempx][tempy] != -1)
+            {
+                enemymark++;
+            }
+            else
+            {
+                break;
+            }
+            tempx++;
+            tempy--;
+        }
+    }
+    tempx = putX-1;
+    tempy = putY+1;
+    for (int index = 1 ; index < 5 ; index++)
+    {
+        if (tempx > 0 && tempy < 16)
+        {
+            if (chessBoard[tempx][tempy] == role)
+            {
+                mmark++;
+            }
+            else if (chessBoard[tempx][tempy] != role && chessBoard[tempx][tempy] != -1)
+            {
+                enemymark++;
+            }
+            else
+            {
+                break;
+            }
+            tempx--;
+            tempy++;
+        }
+    }
+    widget[2] = winValue(mmark,enemymark);
+
+    //左斜判断
+    mmark = 0;
+    enemymark = 0;
+    tempx = putX+1;
+    tempy = putY+1;
+    for (int index = 1 ; index < 5 ; index++)
+    {
+        if (tempx < 16 && tempy < 16)
+        {
+            if (chessBoard[tempx][tempy] == role)
+            {
+                mmark++;
+            }
+            else if (chessBoard[tempx][tempy] != role && chessBoard[tempx][tempy] != -1)
+            {
+                enemymark++;
+            }
+            else
+            {
+                break;
+            }
+            tempx++;
+            tempy++;
+        }
+    }
+    tempx = putX-1;
+    tempy = putY-1;
+    for (int index = 1 ; index < 5 ; index++)
+    {
+        if (tempx > 0 && tempy > 0)
+        {
+            if (chessBoard[tempx][tempy] == role)
+            {
+                mmark++;
+            }
+            else if (chessBoard[tempx][tempy] != role && chessBoard[tempx][tempy] != -1)
+            {
+                enemymark++;
+            }
+            else
+            {
+                break;
+            }
+            tempx--;
+            tempy--;
+        }
+    }
+    widget[3] = winValue(mmark,enemymark);
+
     int maxwidget = -1;
     for (auto mwidget : widget)
     {
@@ -152,7 +251,7 @@ void GomokuBot::putChess(int putX, int putY)
     bookChess[putX][putY] = true;
     chessBoard[putX][putY] = !mrole;
     reset();
-    qDebug() << "x : " << putX << "y : " << putY;
+    //qDebug() << "x : " << putX << "y : " << putY;
     int bestPutX , bestPutY;
     int maxWidget = -1;
     for (int i = 1 ; i < 16 ; i++)
@@ -181,6 +280,7 @@ void GomokuBot::putChess(int putX, int putY)
                 if (enemyValue >= bookWidget[i][j] && enemyValue >= maxWidget)
                 {
                     bookWidget[i][j] = enemyValue;
+                    maxWidget = enemyValue;
                     bestPutX = i;
                     bestPutY = j;
                 }
@@ -189,6 +289,6 @@ void GomokuBot::putChess(int putX, int putY)
     }
     bookChess[bestPutX][bestPutY] = true;
     emit sendPutChess(bestPutX,bestPutY);
-    qDebug() << bestPutX << bestPutY;
+    //qDebug() << bestPutX << bestPutY;
 }
 
