@@ -25,6 +25,7 @@ public:
 
 private:
     int bookWidget[16][16]; 	//储存当下可以获胜的权重
+    bool bookChess[16][16];		//储存棋盘是否下过棋子
     int chessBoard[16][16];		//储层棋盘的所有落子
     int mrole;
     int protectWidgetMax;

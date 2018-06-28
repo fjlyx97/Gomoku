@@ -6,6 +6,7 @@ GomokuBot::GomokuBot(int role)
 {
     memset(this->bookWidget,0,sizeof(this->bookWidget));
     memset(this->chessBoard,-1,sizeof(this->chessBoard));
+    memset(this->bookChess,0,sizeof(this->bookChess));
     this->mrole = role;
 }
 
@@ -37,9 +38,13 @@ int GomokuBot::winWidget(int putX, int putY , int role)
         {
             mmark++;
         }
-        else if (chessBoard[i][putY] == !role)
+        else if (chessBoard[i][putY] == !role && chessBoard[i][putY] != -1)
         {
             enemymark++;
+        }
+        else
+        {
+            break;
         }
     }
     for (int i = putX-1 ; i > 0 && i > putX-5 ; i--)
@@ -48,9 +53,13 @@ int GomokuBot::winWidget(int putX, int putY , int role)
         {
             mmark++;
         }
-        else if (chessBoard[i][putY] == !role)
+        else if (chessBoard[i][putY] == !role && chessBoard[i][putY] != -1)
         {
             enemymark++;
+        }
+        else
+        {
+            break;
         }
     }
     widget[0] = winValue(mmark,enemymark);
@@ -63,9 +72,13 @@ int GomokuBot::winWidget(int putX, int putY , int role)
         {
             mmark++;
         }
-        else if(chessBoard[putX][i] == !role)
+        else if(chessBoard[putX][i] == !role && chessBoard[putX][i] != -1)
         {
             enemymark++;
+        }
+        else
+        {
+            break;
         }
     }
     for (int i = putY-1 ; i > 0 && i > putY-5 ; i--)
@@ -74,9 +87,13 @@ int GomokuBot::winWidget(int putX, int putY , int role)
         {
             mmark++;
         }
-        else if(chessBoard[putX][i] == !role)
+        else if(chessBoard[putX][i] == !role && chessBoard[putX][i] != -1)
         {
             enemymark++;
+        }
+        else
+        {
+            break;
         }
     }
     widget[1] = winValue(mmark,enemymark);
@@ -132,6 +149,7 @@ int GomokuBot::winValue(int mmark, int enemymark)
 
 void GomokuBot::putChess(int putX, int putY)
 {
+    bookChess[putX][putY] = true;
     chessBoard[putX][putY] = !mrole;
     reset();
     qDebug() << "x : " << putX << "y : " << putY;
@@ -141,13 +159,15 @@ void GomokuBot::putChess(int putX, int putY)
     {
         for (int j = 1; j < 16 ; j++)
         {
-            //if (i == 7 && j == 8)
-            bookWidget[i][j] = winWidget(i,j,mrole);
-            if (bookWidget[i][j] > maxWidget)
+            if (bookChess[i][j] == false)
             {
-                maxWidget = bookWidget[i][j];
-                bestPutX = i;
-                bestPutY = j;
+                bookWidget[i][j] = winWidget(i,j,mrole);
+                if (bookWidget[i][j] > maxWidget)
+                {
+                    maxWidget = bookWidget[i][j];
+                    bestPutX = i;
+                    bestPutY = j;
+                }
             }
         }
     }
@@ -155,15 +175,19 @@ void GomokuBot::putChess(int putX, int putY)
     {
         for (int j = 1; j < 16 ; j++)
         {
-            int enemyValue = winWidget(i,j,mrole);
-            if (enemyValue >= bookWidget[i][j] && enemyValue >= maxWidget)
+            if (bookChess[i][j] == false)
             {
-                bookWidget[i][j] = enemyValue;
-                bestPutX = i;
-                bestPutY = j;
+                int enemyValue = winWidget(i,j,mrole);
+                if (enemyValue >= bookWidget[i][j] && enemyValue >= maxWidget)
+                {
+                    bookWidget[i][j] = enemyValue;
+                    bestPutX = i;
+                    bestPutY = j;
+                }
             }
         }
     }
+    bookChess[bestPutX][bestPutY] = true;
     emit sendPutChess(bestPutX,bestPutY);
     qDebug() << bestPutX << bestPutY;
 }

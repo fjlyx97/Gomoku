@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->mBot = NULL;
     this->setWindowTitle("五子棋");
     //初始化棋盘
     this->chessboardInit();
@@ -26,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 MainWindow::~MainWindow()
 {
+    if (mBot != NULL)
+        delete mBot;
     delete ui;
 }
 
