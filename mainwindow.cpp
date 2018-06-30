@@ -521,7 +521,7 @@ void MainWindow::botGame()
 
 void MainWindow::recBotChess(int putX, int putY)
 {
-    qDebug() << "Bot x : " << putX << "Bot y : " << putY;
+    //qDebug() << "Bot x : " << putX << "Bot y : " << putY;
     runGame(row[putX],col[putY]);
     isTurn = true;
 }

@@ -43,7 +43,10 @@ int GomokuBot::winWidget(int putX, int putY , int role)
         }
         else if (chessBoard[i][putY] == !role && chessBoard[i][putY] != -1)
         {
-            flag = 1;
+            if (chessBoard[i+1][putY] != !role)
+            {
+                flag = 1;
+            }
             enemymark++;
         }
         else
@@ -62,7 +65,10 @@ int GomokuBot::winWidget(int putX, int putY , int role)
         }
         else if (chessBoard[i][putY] == !role && chessBoard[i][putY] != -1)
         {
-            flag = 1;
+            if (chessBoard[i-1][putY] != !role)
+            {
+                flag = 1;
+            }
             enemymark++;
         }
         else
@@ -85,7 +91,10 @@ int GomokuBot::winWidget(int putX, int putY , int role)
         }
         else if(chessBoard[putX][i] == !role && chessBoard[putX][i] != -1)
         {
-            flag = 1;
+            if (chessBoard[putX][i+1])
+            {
+                flag = 1;
+            }
             enemymark++;
         }
         else
@@ -104,7 +113,10 @@ int GomokuBot::winWidget(int putX, int putY , int role)
         }
         else if(chessBoard[putX][i] == !role && chessBoard[putX][i] != -1)
         {
-            flag = 1;
+            if (chessBoard[putX][i--] != !role)
+            {
+                flag = 1;
+            }
             enemymark++;
         }
         else
@@ -133,7 +145,10 @@ int GomokuBot::winWidget(int putX, int putY , int role)
             }
             else if (chessBoard[tempx][tempy] == !role && chessBoard[tempx][tempy] != -1)
             {
-                flag = 1;
+                if (chessBoard[tempx+1][tempy-1] != !role)
+                {
+                    flag = 1;
+                }
                 enemymark++;
             }
             else
@@ -159,7 +174,10 @@ int GomokuBot::winWidget(int putX, int putY , int role)
             }
             else if (chessBoard[tempx][tempy] == !role && chessBoard[tempx][tempy] != -1)
             {
-                flag = 1;
+                if (chessBoard[tempx-1][tempy+1] != !role)
+                {
+                    flag = 1;
+                }
                 enemymark++;
             }
             else
@@ -190,7 +208,10 @@ int GomokuBot::winWidget(int putX, int putY , int role)
             }
             else if (chessBoard[tempx][tempy] == !role && chessBoard[tempx][tempy] != -1)
             {
-                flag = 1;
+                if (chessBoard[tempx+1][tempy+1] != !role)
+                {
+                    flag = 1;
+                }
                 enemymark++;
             }
             else
@@ -216,7 +237,10 @@ int GomokuBot::winWidget(int putX, int putY , int role)
             }
             else if (chessBoard[tempx][tempy] == !role && chessBoard[tempx][tempy] != -1)
             {
-                flag = 1;
+                if (chessBoard[tempx-1][tempy-1] != !role)
+                {
+                    flag = 1;
+                }
                 enemymark++;
             }
             else
@@ -303,7 +327,7 @@ void GomokuBot::putChess(int putX, int putY)
             }
         }
     }
-    qDebug() << "mrole : " << mrole;
+    //qDebug() << "mrole : " << mrole;
     //进攻判断
     for (int i = 1 ; i < 16 ; i++)
     {
@@ -322,7 +346,7 @@ void GomokuBot::putChess(int putX, int putY)
             }
         }
     }
-    qDebug() << "mrole : " << !mrole;
+    //qDebug() << "mrole : " << !mrole;
     bookChess[bestPutX][bestPutY] = true;
     chessBoard[bestPutX][bestPutY] = mrole;
     emit sendPutChess(bestPutX,bestPutY);
