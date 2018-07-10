@@ -54,7 +54,6 @@ private:
     int row[16] , col[16]; //记录棋盘坐标,横差50，纵差50，左上（38,53），右下（767,744）
     bool isInChessboard(int putX , int putY); //判断棋子是否在棋盘内
 
-
     //本地对战
     bool isMulGame;
 

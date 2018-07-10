@@ -49,7 +49,7 @@
     <rect>
      <x>160</x>
      <y>100</y>
-     <width>161</width>
+     <width>211</width>
      <height>71</height>
     </rect>
    </property>
@@ -62,7 +62,7 @@
     <string>服务器</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>50</x>
@@ -115,13 +115,13 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>220</x>
      <y>520</y>
-     <width>191</width>
-     <height>29</height>
+     <width>195</width>
+     <height>30</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
